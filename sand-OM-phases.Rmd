@@ -1,0 +1,85 @@
+---
+title: "Sand and organic matter by mass and volume"
+date: "compiled `r Sys.Date()`"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.align = 'center')
+```
+
+
+Usually I think it makes the most sense to think separately about the different phases....sand solids, organic matter solids, and voids (either air or water).
+
+However in this case we probably are more interested in the amount of space occupied by the _organic matter and the voids combined_. That is what affects physical properties like infiltration and firmness of the surface. If the organic matter fits comfortably within the voids among sand particles, the soil will be firm. If the organic matter solids plus the voids between them take up more volume than the sand has pores, the sand grains start to "float" and the surface will become spongy and its properties more dominated by the OM phase. 
+
+
+So for this problem I would actually consider the voids and the organic matter solids as part of the same phase. That means we should use the bulk density for organic matter. But I think it is more appropriate to use the particle density of the sand, not the bulk density...if we use the bulk density, this implies that the sand has porosity of its own that is not at all occupied by organic matter solids or the voids between them.
+
+
+Here are two phase diagrams with the same mass of oven-dry sand, but different amounts of organic matter. We can't really draw mass, so the diagram is labeled with the volume of the three phases. If we were to consider water and air as discrete phases, we would need to re-label the diagram. 
+
+```{r phase-diagram, out.width='50%', echo=FALSE}
+knitr::include_graphics(here::here("intergranular-void-ratio.png"))
+```
+
+
+Here are the calculations for the OM + voids as a percent of the total soil volume. The voids don't have any mass, but they do have volume. That is where the tricky part comes in because we have to use the bulk density for organic matter, but the particle density (i.e. specific gravity) for the sand.
+
+
+$$m_{tot} = m_{SA} + m_{OM}$$ 
+
+$$V_{tot} = V_{SA} + V_{OM} + V_{air~+~water}$$
+
+
+$$\frac{V_{OM + Voids}}{V_{tot}} = \frac{\frac{m_{OM}}{\rho_{OM}}}{\frac{m_{SA}}{G_{SA}} + \frac{m_{OM}}{\rho_{OM}}}$$
+Plugging in some values, for 5% by mass we get:
+
+
+$$\frac{\frac{0.05}{0.22}}{\frac{0.95}{2.65} + \frac{0.05}{0.22}} = 0.388$$
+So at an organic matter content of 5% by mass, 39% of the total soil volume is occupied by either organic matter solids or voids. 
+
+
+If we assume a bulk density of 1.56 for the sand, with no organic matter at all this gives a pore volume $n$  of
+
+$$n=1 - \left( \frac{1.56}{2.65} \right) = 0.41$$
+
+So from a simple phase relations view, it would take just over 5% organic matter to fill all of the pores between the sand particles. 
+
+
+This is definitely an oversimplification because in reality all the OM will not fit between the sand grains. Individual turfgrass roots are often thicker than the radius of individual pores, so almost surely the sand particles are getting dislodged at OM contents much lower than 5% by mass.
+
+
+Here is a plot of the volume fraction of organic matter solids + voids as a function of the organic matter by mass:
+
+
+```{r}
+library(ggplot2)
+library(magrittr)
+theme_set(theme_minimal())
+
+om_data <- tibble::tibble(
+	om_mass = seq(0, 0.25, 0.01),
+	sand_mass = 1 - om_mass,
+	om_plus_void_vol = om_mass / 0.22,
+	sand_vol = sand_mass / 2.65,
+	om_plus_vold_vol_pct = om_plus_void_vol / (om_plus_void_vol + sand_vol)
+)
+
+om_data %>% 
+	ggplot(aes(om_mass, om_plus_vold_vol_pct))+
+	geom_line()+
+	scale_x_continuous(
+		expression(frac('g organic matter','g oven-dry soil')),
+		labels = scales::label_percent(suffix = "", accuracy = 1))+
+	scale_y_continuous(
+		'volume % occupied by OM + voids)', 
+		labels = scales::label_percent(suffix = "", accuracy = 1))+
+	labs(title = 'Phase relations of sand, organic matter, and voids')
+	
+```
+ 
+ 
+This has a similar shape to your plot, but the values are different because I treated the void volume differently. I think both of our calculations are correct, so it just depends how we choose to define the volume. 
+
+
