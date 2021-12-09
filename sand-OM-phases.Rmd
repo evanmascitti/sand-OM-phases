@@ -1,11 +1,16 @@
 ---
 title: "Sand and organic matter by mass and volume"
 date: "compiled `r Sys.Date()`"
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(fig.align = 'center', echo = FALSE)
+knitr::opts_chunk$set(fig.align = 'center'
+											# echo = FALSE
+											)
 ```
 
 
@@ -73,7 +78,7 @@ om_data %>%
 		expression(frac('g organic matter','g oven-dry soil')),
 		labels = scales::label_percent(suffix = "", accuracy = 1))+
 	scale_y_continuous(
-		'volume % occupied by OM + voids)', 
+		'volume % occupied by OM + voids', 
 		labels = scales::label_percent(suffix = "", accuracy = 1))+
 	labs(title = 'Phase relations of sand, organic matter, and voids')
 	
