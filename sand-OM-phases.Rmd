@@ -5,7 +5,7 @@ date: "compiled `r Sys.Date()`"
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(fig.align = 'center')
+knitr::opts_chunk$set(fig.align = 'center', echo = FALSE)
 ```
 
 
@@ -19,7 +19,7 @@ So for this problem I would actually consider the voids and the organic matter s
 
 Here are two phase diagrams with the same mass of oven-dry sand, but different amounts of organic matter. We can't really draw mass, so the diagram is labeled with the volume of the three phases. If we were to consider water and air as discrete phases, we would need to re-label the diagram. 
 
-```{r phase-diagram, out.width='50%', echo=FALSE}
+```{r phase-diagram, out.width='50%'}
 knitr::include_graphics(here::here("intergranular-void-ratio.png"))
 ```
 
